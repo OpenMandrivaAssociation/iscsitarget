@@ -1,5 +1,3 @@
-%define module_name dkms-iscsitarget
-
 Name: iscsitarget
 Summary: Open source iSCSI target
 Version: 0.4.15
@@ -18,26 +16,26 @@ iSCSI Enterprise Target is for building an iSCSI storage system on
 Linux. It is aimed at developing an iSCSI target satisfying enterprise
 requirements.
 
-%package -n %{module_name}
+%package -n dkms-%{name}
 Summary: iscsi-target kernel module
 Group: Networking/Other
 Requires: kernel-source
 Requires(preun): dkms
 Requires(post): dkms
 
-%description -n %{module_name}
+%description -n dkms-%{name}
 This package contains the iscsi-target kernel module.
 
 %prep
 %setup -q
-%patch -p1 -b .install
+#patch -p1 -b .install
 
 %build
-%make progs
+%make usr
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make DISTDIR=%{buildroot} progs_install
+make DISTDIR=%{buildroot} install-etc install-usr
 
 mkdir -p %{buildroot}%{_mandir}/man{5,8}
 install -m 0644 doc/manpages/ietd.8 %{buildroot}%{_mandir}/man8/
@@ -56,17 +54,17 @@ mkdir -p %{buildroot}%{_initrddir}
 install -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/iscsi-target
 
 # DKMS
-mkdir -p %{buildroot}/usr/src/%{module_name}-%{version}
-mkdir -p %{buildroot}/usr/src/%{module_name}-%{version}/usr
-cp -a kernel %{buildroot}/usr/src/%{module_name}-%{version}
-cp -a include %{buildroot}/usr/src/%{module_name}-%{version}
-cp -f Makefile %{buildroot}/usr/src/%{module_name}-%{version}
-cp usr/Makefile %{buildroot}/usr/src/%{module_name}-%{version}/usr
+mkdir -p %{buildroot}/usr/src/%{name}-%{version}-%{release}
+mkdir -p %{buildroot}/usr/src/%{name}-%{version}-%{release}/usr
+cp -a kernel %{buildroot}/usr/src/%{name}-%{version}-%{release}
+cp -a include %{buildroot}/usr/src/%{name}-%{version}-%{release}
+cp -f Makefile %{buildroot}/usr/src/%{name}-%{version}-%{release}
+cp usr/Makefile %{buildroot}/usr/src/%{name}-%{version}-%{release}/usr
 
-cat > %{buildroot}/usr/src/%{module_name}-%{version}-%{release}/dkms.conf <<EOF
+cat > %{buildroot}/usr/src/%{name}-%{version}-%{release}/dkms.conf <<EOF
 PACKAGE_VERSION="%{version}-%{release}"
-PACKAGE_NAME="%{module_name}"
-MAKE[0]="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make mods"
+PACKAGE_NAME="%{name}"
+MAKE[0]="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make kernel"
 CLEAN="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make clean"
 
 BUILT_MODULE_NAME[0]="iscsi_trgt"
@@ -80,16 +78,16 @@ POST_INSTALL="post-install"
 POST_REMOVE="post-remove"
 EOF
 
-%post -n %{module_name}
-dkms add -m %{module_name} -v %{version} --rpm_safe_upgrade
-dkms build -m %{module_name} -v %{version} --rpm_safe_upgrade
-dkms install -m %{module_name} -v %{version} --rpm_safe_upgrade
+%post -n dkms-%{name}
+dkms add -m %{name} -v %{version}-%{release} --rpm_safe_upgrade
+dkms build -m %{name} -v %{version}-%{release} --rpm_safe_upgrade
+dkms install -m %{name} -v %{version}-%{release} --rpm_safe_upgrade
 
 %post
 %_post_service iscsi-target
 
-%preun -n %{module_name}
-dkms remove -m %{module_name} -v %{version} --rpm_safe_upgrade --all || :
+%preun -n dkms-%{name}
+dkms remove -m %{name} -v %{version}-%{release} --rpm_safe_upgrade --all || :
 
 %preun
 %_preun_service iscsi-target
@@ -109,9 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man5/ietd.conf.5*
 %{_mandir}/man8/ietd.8*
 
-%files -n %{module_name}
+%files -n dkms-%{name}
 %defattr(-,root,root)
-%_usrsrc/%{module_name}-%{version}
+%_usrsrc/%{name}-%{version}-%{release}
 
 
 
