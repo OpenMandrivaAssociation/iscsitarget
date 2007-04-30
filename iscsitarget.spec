@@ -2,11 +2,11 @@
 
 Name: iscsitarget
 Summary: Open source iSCSI target
-Version: 0.4.14
+Version: 0.4.15
 Release: %mkrel 1
 License: GPL
 Group: Networking/Other
-Source0: iscsitarget-%{version}.tar.gz
+Source0: iscsitarget-%{version}.tar.bz2
 Source1: iscsitarget.init
 Patch: iscsitarget-install.patch
 BuildRequires: libopenssl-devel
@@ -63,8 +63,8 @@ cp -a include %{buildroot}/usr/src/%{module_name}-%{version}
 cp -f Makefile %{buildroot}/usr/src/%{module_name}-%{version}
 cp usr/Makefile %{buildroot}/usr/src/%{module_name}-%{version}/usr
 
-cat > %{buildroot}/usr/src/%{module_name}-%{version}/dkms.conf <<EOF
-PACKAGE_VERSION="%{version}"
+cat > %{buildroot}/usr/src/%{module_name}-%{version}-%{release}/dkms.conf <<EOF
+PACKAGE_VERSION="%{version}-%{release}"
 PACKAGE_NAME="%{module_name}"
 MAKE[0]="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make mods"
 CLEAN="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make clean"
