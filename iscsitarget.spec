@@ -1,11 +1,12 @@
 Name: iscsitarget
 Summary: Open source iSCSI target
 Version: 0.4.15
-Release: %mkrel 1
+Release: %mkrel 2
 License: GPL
 Group: Networking/Other
 Source0: iscsitarget-%{version}.tar.bz2
 Source1: iscsitarget.init
+Source2: iscitarget-2.6.22.patch
 Patch: iscsitarget-install.patch
 BuildRequires: libopenssl-devel
 URL: http://iscsitarget.sourceforge.net/
@@ -56,14 +57,18 @@ install -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/iscsi-target
 # DKMS
 mkdir -p %{buildroot}/usr/src/%{name}-%{version}-%{release}
 mkdir -p %{buildroot}/usr/src/%{name}-%{version}-%{release}/usr
+mkdir -p %{buildroot}/usr/src/%{name}-%{version}-%{release}/patches
 cp -a kernel %{buildroot}/usr/src/%{name}-%{version}-%{release}
 cp -a include %{buildroot}/usr/src/%{name}-%{version}-%{release}
 cp -f Makefile %{buildroot}/usr/src/%{name}-%{version}-%{release}
 cp usr/Makefile %{buildroot}/usr/src/%{name}-%{version}-%{release}/usr
+cp %{SOURCE2} %{buildroot}/usr/src/%{name}-%{version}-%{release}/patches
 
 cat > %{buildroot}/usr/src/%{name}-%{version}-%{release}/dkms.conf <<EOF
 PACKAGE_VERSION="%{version}-%{release}"
 PACKAGE_NAME="%{name}"
+PATCH[0]="iscitarget-2.6.22.patch"
+PATCH_MATCH[0]="2\.6\.22.*"
 MAKE[0]="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make kernel"
 CLEAN="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make clean"
 
