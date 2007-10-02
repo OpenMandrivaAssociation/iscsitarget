@@ -1,7 +1,7 @@
 Name: iscsitarget
 Summary: Open source iSCSI target
 Version: 0.4.15
-Release: %mkrel 2
+Release: %mkrel 3
 License: GPL
 Group: Networking/Other
 Source0: iscsitarget-%{version}.tar.bz2
