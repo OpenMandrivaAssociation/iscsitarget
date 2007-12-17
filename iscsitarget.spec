@@ -10,7 +10,6 @@ Source2: iscitarget-2.6.22.patch
 Patch: iscsitarget-install.patch
 BuildRequires: libopenssl-devel
 URL: http://iscsitarget.sourceforge.net/
-BuildRoot: %{_tmppath}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 iSCSI Enterprise Target is for building an iSCSI storage system on
