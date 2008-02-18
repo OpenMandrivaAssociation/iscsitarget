@@ -1,5 +1,5 @@
 Name: iscsitarget
-Summary: Open source iSCSI target
+Summary: iSCSI target
 Version: 0.4.15
 Release: %mkrel 3
 License: GPL
