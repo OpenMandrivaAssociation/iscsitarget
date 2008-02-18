@@ -18,7 +18,7 @@ Linux. It is aimed at developing an iSCSI target satisfying enterprise
 requirements.
 
 %package -n dkms-%{name}
-Summary: iscsi-target kernel module
+Summary: iSCSI-target kernel module
 Group: Networking/Other
 Requires: kernel-source
 Requires(preun): dkms
