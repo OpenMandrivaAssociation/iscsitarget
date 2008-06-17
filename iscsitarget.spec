@@ -1,16 +1,18 @@
-Name: iscsitarget
-Summary: iSCSI target
-Version: 0.4.15
-Release: %mkrel 4
-License: GPL
-Group: Networking/Other
-Source0: iscsitarget-%{version}.tar.bz2
-Source1: iscsitarget.init
-Source2: iscitarget-2.6.22.patch
-Patch: iscsitarget-install.patch
+Name:       iscsitarget
+Version:    0.4.16
+Release:    %mkrel 1
+Summary:    iSCSI target
+License:    GPL
+Group:      Networking/Other
+URL:        http://iscsitarget.sourceforge.net/
+Source0:    http://downloads.sourceforge.net/iscsitarget/%{name}-%{version}.tar.gz
+Source1:    iscsitarget.init
+Source2:    iscitarget-2.6.22.patch
+Patch0:     iscsitarget-install.patch
+Patch1:     iscsitarget-0.4.16-fix-glibc-2.8-build-1.patch
+Patch2:     iscsitarget-0.4.16-fix-glibc-2.8-build-2.patch
 BuildRequires: libopenssl-devel
-URL: http://iscsitarget.sourceforge.net/
-BuildRoot: %{_tmppath}/%{name}-%{version}-root-%(id -u -n)
+BuildRoot: %{_tmppath}/%{name}-%{version}
 
 %description
 iSCSI Enterprise Target is for building an iSCSI storage system on
@@ -30,12 +32,14 @@ This package contains the iscsi-target kernel module.
 %prep
 %setup -q
 #patch -p1 -b .install
+%patch1 -p1 -b .glibc-2.8-1
+%patch2 -p1 -b .glibc-2.8-2
 
 %build
 %make usr
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 make DISTDIR=%{buildroot} install-etc install-usr
 
 mkdir -p %{buildroot}%{_mandir}/man{5,8}
@@ -98,7 +102,7 @@ dkms remove -m %{name} -v %{version}-%{release} --rpm_safe_upgrade --all || :
 %_preun_service iscsi-target
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
