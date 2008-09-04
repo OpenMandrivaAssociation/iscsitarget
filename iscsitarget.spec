@@ -1,6 +1,6 @@
 Name:       iscsitarget
 Version:    0.4.16
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
@@ -11,6 +11,7 @@ Source2:    iscitarget-2.6.22.patch
 Patch0:     iscsitarget-install.patch
 Patch1:     iscsitarget-0.4.16-fix-glibc-2.8-build-1.patch
 Patch2:     iscsitarget-0.4.16-fix-glibc-2.8-build-2.patch
+Patch3:     iscsitarget-kernel-2.6.26.patch
 BuildRequires: libopenssl-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}
 
@@ -34,6 +35,7 @@ This package contains the iscsi-target kernel module.
 #patch -p1 -b .install
 %patch1 -p1 -b .glibc-2.8-1
 %patch2 -p1 -b .glibc-2.8-2
+%patch3 -b .kernel2-6-26
 
 %build
 %make usr
@@ -73,8 +75,8 @@ PACKAGE_VERSION="%{version}-%{release}"
 PACKAGE_NAME="%{name}"
 PATCH[0]="iscitarget-2.6.22.patch"
 PATCH_MATCH[0]="2\.6\.22.*"
-MAKE[0]="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make kernel"
-CLEAN="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make clean"
+MAKE[0]="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make KSRC=\${kernel_source_dir} kernel"
+CLEAN="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make KSRC=\${kernel_source_dir} clean"
 
 BUILT_MODULE_NAME[0]="iscsi_trgt"
 BUILT_MODULE_LOCATION[0]="kernel"
