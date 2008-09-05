@@ -1,6 +1,6 @@
 Name:       iscsitarget
 Version:    0.4.16
-Release:    %mkrel 2
+Release:    %mkrel 3
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
@@ -23,7 +23,6 @@ requirements.
 %package -n dkms-%{name}
 Summary: iSCSI-target kernel module
 Group: Networking/Other
-Requires: kernel-source
 Requires(preun): dkms
 Requires(post): dkms
 
