@@ -1,6 +1,6 @@
 Name:       iscsitarget
 Version:    0.4.16
-Release:    %mkrel 3
+Release:    %mkrel 4
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
@@ -67,7 +67,7 @@ cp -a kernel %{buildroot}/usr/src/%{name}-%{version}-%{release}
 cp -a include %{buildroot}/usr/src/%{name}-%{version}-%{release}
 cp -f Makefile %{buildroot}/usr/src/%{name}-%{version}-%{release}
 cp usr/Makefile %{buildroot}/usr/src/%{name}-%{version}-%{release}/usr
-cp %{SOURCE2} %{buildroot}/usr/src/%{name}-%{version}-%{release}/patches
+cp %{SOURCE2} patches/* %{buildroot}/usr/src/%{name}-%{version}-%{release}/patches
 
 cat > %{buildroot}/usr/src/%{name}-%{version}-%{release}/dkms.conf <<EOF
 PACKAGE_VERSION="%{version}-%{release}"
