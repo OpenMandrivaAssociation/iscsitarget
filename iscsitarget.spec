@@ -1,6 +1,6 @@
 Name:       iscsitarget
 Version:    0.4.17
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
@@ -8,6 +8,11 @@ URL:        http://iscsitarget.sourceforge.net/
 Source0:    http://downloads.sourceforge.net/iscsitarget/%{name}-%{version}.tar.gz
 Source1:    iscsitarget.init
 Source2:    iscitarget-2.6.22.patch
+Patch1:     iscsitarget-r199.patch
+Patch2:     iscsitarget-r201.patch
+Patch3:     iscsitarget-r211.patch
+Patch4:     iscsitarget-r214.patch
+Patch5:     iscsitarget-try-patch-again.patch
 BuildRequires: libopenssl-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}
 
@@ -27,9 +32,14 @@ This package contains the iscsi-target kernel module.
 
 %prep
 %setup -q
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 %build
-%make usr
+%make -C usr
 
 %install
 rm -rf %{buildroot}
