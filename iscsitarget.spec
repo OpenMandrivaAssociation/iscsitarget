@@ -1,6 +1,6 @@
 Name:       iscsitarget
-Version:    0.4.17
-Release:    %mkrel 3
+Version:    1.4.19
+Release:    %mkrel 1
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
@@ -8,13 +8,36 @@ URL:        http://iscsitarget.sourceforge.net/
 Source0:    http://downloads.sourceforge.net/iscsitarget/%{name}-%{version}.tar.gz
 Source1:    iscsitarget.init
 Source2:    iscitarget-2.6.22.patch
-Patch1:     iscsitarget-r199.patch
-Patch2:     iscsitarget-r201.patch
-Patch3:     iscsitarget-r211.patch
-Patch4:     iscsitarget-r214.patch
-Patch5:     iscsitarget-try-patch-again.patch
+Source3:    iscitarget-2.6.33.patch
+#
+# patches from svn
+# for i in $(seq 277 293);do
+# svn log -c $i http://iscsitarget.svn.sourceforge.net/svnroot/iscsitarget/trunk > iscsitarget-r$i.patch
+# svn diff -c $i http://iscsitarget.svn.sourceforge.net/svnroot/iscsitarget/trunk >> iscsitarget-r$i.patch
+# done
+#
+Patch277: iscsitarget-r277.patch
+Patch278: iscsitarget-r278.patch
+Patch279: iscsitarget-r279.patch
+Patch280: iscsitarget-r280.patch
+Patch281: iscsitarget-r281.patch
+Patch282: iscsitarget-r282.patch
+Patch285: iscsitarget-r285.patch
+Patch288: iscsitarget-r288.patch
+Patch289: iscsitarget-r289.patch
+Patch290: iscsitarget-r290.patch
+Patch291: iscsitarget-r291.patch
+Patch292: iscsitarget-r292.patch
+Patch293: iscsitarget-r293.patch
+#
+# other patches
+#
+Patch0:     iscsitarget-1.4.19-strict-alias.patch
+Patch1:     iscsitarget-1.4.19-dkms.patch
 BuildRequires: libopenssl-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}
+
+%define dkmsdir %{_usrsrc}/%{name}-%{version}-%{release}
 
 %description
 iSCSI Enterprise Target is for building an iSCSI storage system on
@@ -32,63 +55,43 @@ This package contains the iscsi-target kernel module.
 
 %prep
 %setup -q
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
+%patch277 -p0 -b .r277
+%patch278 -p0 -b .r278
+%patch279 -p0 -b .r279
+%patch280 -p0 -b .r280
+%patch281 -p0 -b .r281
+%patch282 -p0 -b .r282
+%patch285 -p0 -b .r285
+%patch288 -p0 -b .r288
+%patch289 -p0 -b .r289
+%patch290 -p0 -b .r290
+%patch291 -p0 -b .r291
+%patch292 -p0 -b .r292
+%patch293 -p0 -b .r293
+
+cp %{SOURCE2} patches/
+cp %{SOURCE3} patches/
+%patch0 -p1 -b .alias
+%patch1 -p1 -b .dkms
 
 %build
-%make -C usr
+%make -C usr CC="gcc %optflags %{?ldflags:%ldflags}"
 
 %install
 rm -rf %{buildroot}
-make DISTDIR=%{buildroot} install-etc install-usr
+make DISTDIR=%{buildroot} KVER=`uname -r` install-usr install-man
 
-mkdir -p %{buildroot}%{_mandir}/man{5,8}
-install -m 0644 doc/manpages/ietd.8 %{buildroot}%{_mandir}/man8/
-install -m 0644 doc/manpages/ietd.conf.5 %{buildroot}%{_mandir}/man5/
-
+# do this manually to install in proper paths
 mkdir -p %{buildroot}%{_initrddir}
-mv -f %{buildroot}%{_sysconfdir}/init.d/iscsi-target %{buildroot}%{_initrddir}
-
-# conf
-install -m 0644 etc/ietd.conf %{buildroot}%{_sysconfdir}
-install -m 0644 etc/initiators.allow %{buildroot}%{_sysconfdir}
-install -m 0644 etc/initiators.deny %{buildroot}%{_sysconfdir}
-
-# init script
-mkdir -p %{buildroot}%{_initrddir}
-install -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/iscsi-target
+install %{SOURCE1} %{buildroot}%{_initrddir}/iscsi-target
+cp etc/ietd.conf %{buildroot}%{_sysconfdir}
+cp etc/*.allow %{buildroot}%{_sysconfdir}
 
 # DKMS
-mkdir -p %{buildroot}/usr/src/%{name}-%{version}-%{release}
-mkdir -p %{buildroot}/usr/src/%{name}-%{version}-%{release}/usr
-mkdir -p %{buildroot}/usr/src/%{name}-%{version}-%{release}/patches
-cp -a kernel %{buildroot}/usr/src/%{name}-%{version}-%{release}
-cp -a include %{buildroot}/usr/src/%{name}-%{version}-%{release}
-cp -f Makefile %{buildroot}/usr/src/%{name}-%{version}-%{release}
-cp usr/Makefile %{buildroot}/usr/src/%{name}-%{version}-%{release}/usr
-cp %{SOURCE2} patches/* %{buildroot}/usr/src/%{name}-%{version}-%{release}/patches
+mkdir -p %{buildroot}%{dkmsdir}
+cp -r kernel include patches %{buildroot}%{dkmsdir}/
 
-cat > %{buildroot}/usr/src/%{name}-%{version}-%{release}/dkms.conf <<EOF
-PACKAGE_VERSION="%{version}-%{release}"
-PACKAGE_NAME="%{name}"
-PATCH[0]="iscitarget-2.6.22.patch"
-PATCH_MATCH[0]="2\.6\.22.*"
-MAKE[0]="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make KSRC=\${kernel_source_dir} kernel"
-CLEAN="cd \${dkms_tree}/\${PACKAGE_NAME}/\${PACKAGE_VERSION}/build ; make KSRC=\${kernel_source_dir} clean"
-
-BUILT_MODULE_NAME[0]="iscsi_trgt"
-BUILT_MODULE_LOCATION[0]="kernel"
-DEST_MODULE_NAME[0]="iscsi_trgt"
-DEST_MODULE_LOCATION[0]="/kernel/iscsi"
-
-REMAKE_INITRD="no"
-AUTOINSTALL=yes
-POST_INSTALL="post-install"
-POST_REMOVE="post-remove"
-EOF
+sed -e 's@^PACKAGE_VERSION=.*$@PACKAGE_VERSION="%{version}-%{release}"@' dkms.conf > %{buildroot}%{dkmsdir}/dkms.conf
 
 %post -n dkms-%{name}
 dkms add -m %{name} -v %{version}-%{release} --rpm_safe_upgrade
@@ -109,19 +112,18 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc ChangeLog COPYING README
+%doc ChangeLog COPYING README* RELEASE_NOTES
 %config(noreplace) %{_sysconfdir}/ietd.conf
 %config(noreplace) %{_sysconfdir}/initiators.allow
-%config(noreplace) %{_sysconfdir}/initiators.deny
+%config(noreplace) %{_sysconfdir}/targets.allow
 %{_initrddir}/iscsi-target
 %{_sbindir}/ietadm
 %{_sbindir}/ietd
 %{_mandir}/man5/ietd.conf.5*
 %{_mandir}/man8/ietd.8*
+%{_mandir}/man8/ietadm.8*
 
 %files -n dkms-%{name}
 %defattr(-,root,root)
-%_usrsrc/%{name}-%{version}-%{release}
-
-
+%{_usrsrc}/%{name}-%{version}-%{release}
 
