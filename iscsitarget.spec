@@ -1,6 +1,6 @@
 Name:       iscsitarget
 Version:    1.4.19
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
