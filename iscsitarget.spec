@@ -1,6 +1,6 @@
 Name:       iscsitarget
-Version:    1.4.19
-Release:    %mkrel 3
+Version:    1.4.20
+Release:    %mkrel 1
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
@@ -8,33 +8,19 @@ URL:        http://iscsitarget.sourceforge.net/
 Source0:    http://downloads.sourceforge.net/iscsitarget/%{name}-%{version}.tar.gz
 Source1:    iscsitarget.init
 Source2:    iscitarget-2.6.22.patch
-Source3:    iscitarget-2.6.33.patch
 #
 # patches from svn
-# for i in $(seq 277 293);do
+# for i in $(seq 330 331);do
 # svn log -c $i http://iscsitarget.svn.sourceforge.net/svnroot/iscsitarget/trunk > iscsitarget-r$i.patch
 # svn diff -c $i http://iscsitarget.svn.sourceforge.net/svnroot/iscsitarget/trunk >> iscsitarget-r$i.patch
 # done
 #
-Patch277: iscsitarget-r277.patch
-Patch278: iscsitarget-r278.patch
-Patch279: iscsitarget-r279.patch
-Patch280: iscsitarget-r280.patch
-Patch281: iscsitarget-r281.patch
-Patch282: iscsitarget-r282.patch
-Patch285: iscsitarget-r285.patch
-Patch288: iscsitarget-r288.patch
-Patch289: iscsitarget-r289.patch
-Patch290: iscsitarget-r290.patch
-Patch291: iscsitarget-r291.patch
-Patch292: iscsitarget-r292.patch
-Patch293: iscsitarget-r293.patch
+Patch330: iscsitarget-r330.patch
+Patch331: iscsitarget-r331.patch
 #
 # other patches
 #
-Patch0:     iscsitarget-1.4.19-strict-alias.patch
-Patch1:     iscsitarget-1.4.19-dkms.patch
-BuildRequires: libopenssl-devel
+Patch1:     iscsitarget-1.4.20-dkms.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}
 
 %define dkmsdir %{_usrsrc}/%{name}-%{version}-%{release}
@@ -55,24 +41,11 @@ This package contains the iscsi-target kernel module.
 
 %prep
 %setup -q
-%patch277 -p0 -b .r277
-%patch278 -p0 -b .r278
-%patch279 -p0 -b .r279
-%patch280 -p0 -b .r280
-%patch281 -p0 -b .r281
-%patch282 -p0 -b .r282
-%patch285 -p0 -b .r285
-%patch288 -p0 -b .r288
-%patch289 -p0 -b .r289
-%patch290 -p0 -b .r290
-%patch291 -p0 -b .r291
-%patch292 -p0 -b .r292
-%patch293 -p0 -b .r293
+%patch330 -p0 -b .r330.orig
+%patch331 -p0 -b .r331.orig
 
-cp %{SOURCE2} patches/
-cp %{SOURCE3} patches/
-%patch0 -p1 -b .alias
-%patch1 -p1 -b .dkms
+cp %{SOURCE2} patches/compat-mdv2008.patch
+%patch1 -p1 -b .dkms.orig
 
 %build
 %make -C usr CC="gcc %optflags %{?ldflags:%ldflags}"
@@ -90,6 +63,8 @@ cp etc/*.allow %{buildroot}%{_sysconfdir}
 # DKMS
 mkdir -p %{buildroot}%{dkmsdir}
 cp -r kernel include patches %{buildroot}%{dkmsdir}/
+# remove patch backup files
+rm -f  %{buildroot}%{dkmsdir}/*/*.r*.orig
 
 sed -e 's@^PACKAGE_VERSION=.*$@PACKAGE_VERSION="%{version}-%{release}"@' dkms.conf > %{buildroot}%{dkmsdir}/dkms.conf
 
