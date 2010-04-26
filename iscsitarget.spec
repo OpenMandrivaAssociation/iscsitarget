@@ -1,5 +1,5 @@
 Name:       iscsitarget
-Version:    1.4.20
+Version:    1.4.20.1
 Release:    %mkrel 1
 Summary:    iSCSI target
 License:    GPL
@@ -15,8 +15,6 @@ Source2:    iscitarget-2.6.22.patch
 # svn diff -c $i http://iscsitarget.svn.sourceforge.net/svnroot/iscsitarget/trunk >> iscsitarget-r$i.patch
 # done
 #
-Patch330: iscsitarget-r330.patch
-Patch331: iscsitarget-r331.patch
 #
 # other patches
 #
@@ -41,8 +39,6 @@ This package contains the iscsi-target kernel module.
 
 %prep
 %setup -q
-%patch330 -p0 -b .r330.orig
-%patch331 -p0 -b .r331.orig
 
 cp %{SOURCE2} patches/compat-mdv2008.patch
 %patch1 -p1 -b .dkms.orig
