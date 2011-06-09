@@ -1,3 +1,4 @@
+%define		subrel 1
 Name:       iscsitarget
 Version:    1.4.20.1
 Release:    %mkrel 2
@@ -15,6 +16,7 @@ Source2:    iscitarget-2.6.22.patch
 # svn diff -c $i http://iscsitarget.svn.sourceforge.net/svnroot/iscsitarget/trunk >> iscsitarget-r$i.patch
 # done
 #
+Patch373:	iscsitarget-r373.patch
 #
 # other patches
 #
@@ -42,6 +44,7 @@ This package contains the iscsi-target kernel module.
 
 cp %{SOURCE2} patches/compat-mdv2008.patch
 %patch1 -p1 -b .dkms.orig
+%patch373 -p0 -b .r373.orig
 
 %build
 %make -C usr CC="gcc %optflags %{?ldflags:%ldflags}"
