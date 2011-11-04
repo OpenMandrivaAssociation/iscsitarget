@@ -21,6 +21,7 @@ Source2:    iscitarget-2.6.22.patch
 #
 Patch1:     iscsitarget-1.4.20.3-dkms.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}
+BuildRequires:	kernel-devel
 
 %define dkmsdir %{_usrsrc}/%{name}-%{version}-%{release}
 
