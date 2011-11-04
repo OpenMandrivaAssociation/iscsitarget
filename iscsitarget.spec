@@ -1,7 +1,6 @@
-%define		subrel 1
 Name:       iscsitarget
 Version:    1.4.20.2
-Release:    %mkrel 1
+Release:    %mkrel 2
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
@@ -51,7 +50,7 @@ cp %{SOURCE2} patches/compat-mdv2008.patch
 
 %install
 rm -rf %{buildroot}
-make DISTDIR=%{buildroot} KVER=`uname -r` install-usr install-man
+make DESTDIR=%{buildroot} KVER=`uname -r` install-usr install-man
 
 # do this manually to install in proper paths
 mkdir -p %{buildroot}%{_initrddir}
