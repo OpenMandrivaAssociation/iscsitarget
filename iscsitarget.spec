@@ -1,6 +1,7 @@
+%define     subrel 1
 Name:       iscsitarget
-Version:    1.4.20.2
-Release:    %mkrel 2
+Version:    1.4.20.3
+Release:    %mkrel 0
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
@@ -15,11 +16,10 @@ Source2:    iscitarget-2.6.22.patch
 # svn diff -c $i http://iscsitarget.svn.sourceforge.net/svnroot/iscsitarget/trunk >> iscsitarget-r$i.patch
 # done
 #
-Patch373:	iscsitarget-r373.patch
 #
 # other patches
 #
-Patch1:     iscsitarget-1.4.20-dkms.patch
+Patch1:     iscsitarget-1.4.20.3-dkms.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}
 
 %define dkmsdir %{_usrsrc}/%{name}-%{version}-%{release}
@@ -43,7 +43,6 @@ This package contains the iscsi-target kernel module.
 
 cp %{SOURCE2} patches/compat-mdv2008.patch
 %patch1 -p1 -b .dkms.orig
-%patch373 -p0 -b .r373.orig
 
 %build
 %make -C usr CC="gcc %optflags %{?ldflags:%ldflags}"
@@ -99,4 +98,3 @@ rm -rf %{buildroot}
 %files -n dkms-%{name}
 %defattr(-,root,root)
 %{_usrsrc}/%{name}-%{version}-%{release}
-
