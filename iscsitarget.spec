@@ -1,7 +1,7 @@
 %define		subrel 1
 Name:       iscsitarget
-Version:    1.4.20.1
-Release:    %mkrel 2
+Version:    1.4.20.2
+Release:    %mkrel 1
 Summary:    iSCSI target
 License:    GPL
 Group:      Networking/Other
