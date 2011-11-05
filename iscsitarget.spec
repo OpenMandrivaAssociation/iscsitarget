@@ -1,4 +1,4 @@
-%define     subrel 1
+%define     subrel 2
 Name:       iscsitarget
 Version:    1.4.20.3
 Release:    %mkrel 0
@@ -20,8 +20,9 @@ Source2:    iscitarget-2.6.22.patch
 # other patches
 #
 Patch1:     iscsitarget-1.4.20.3-dkms.patch
+Patch2:	    isciscsitarget-1.4.20.3-makefile.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}
-BuildRequires:	kernel-devel
+BuildRequires: kernel-devel
 
 %define dkmsdir %{_usrsrc}/%{name}-%{version}-%{release}
 
@@ -44,6 +45,7 @@ This package contains the iscsi-target kernel module.
 
 cp %{SOURCE2} patches/compat-mdv2008.patch
 %patch1 -p1 -b .dkms.orig
+%patch2 -p1 -b .makefile
 
 %build
 %make -C usr CC="gcc %optflags %{?ldflags:%ldflags}"
