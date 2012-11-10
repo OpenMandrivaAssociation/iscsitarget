@@ -1,0 +1,11 @@
+--- iscsitarget-1.4.20.3/kernel/Makefile	2011-11-03 23:26:38.000000000 -0600
++++ iscsitarget-1.4.20.3/kernel/Makefile.dlucio	2011-11-04 16:55:26.624325073 -0600
+@@ -7,7 +7,7 @@
+ #
+ # Note 2! The CFLAGS definitions are now in the main makefile.
+ 
+-EXTRA_CFLAGS += -I$(src)/../include 
++EXTRA_CFLAGS += -I$(src)/../include -Wall
+ 
+ obj-m		+= iscsi_trgt.o
+ iscsi_trgt-objs	:= tio.o iscsi.o nthread.o wthread.o config.o digest.o \

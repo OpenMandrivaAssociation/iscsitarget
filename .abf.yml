@@ -1,0 +1,4 @@
+sources:
+  "iscitarget-2.6.22.patch:"	e9e1f641cf7f0f5c7c727a72626a543bf0c859e4
+  "iscsitarget-1.4.20.3.tar.gz:"	d8c1923ff973698fa2cc0aba4ba2d26fc9ba0085
+  "iscsitarget.init:"	16f17bb890845a3ca50f07d958e0da6b69fdb52a
