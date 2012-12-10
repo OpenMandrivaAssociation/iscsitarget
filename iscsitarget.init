@@ -1,0 +1,127 @@
+#!/bin/sh
+#
+# chkconfig: - 39 35
+# description: Starts and stops the iSCSI target
+#
+# pidfile: /var/run/ietd.pid
+# config:  /etc/ietd.conf
+
+### BEGIN INIT INFO
+# Provides: iscsi-target
+# Required-Start: $network
+# Requires-Stop: $network
+# Default-Start: 3 4 5
+# Short-Description: iSCSI target
+# Description: iSCSI Enterprise Target is for building an iSCSI storage system on
+#              Linux. It is aimed at developing an iSCSI target satisfying enterprise
+#              requirements.
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MEM_SIZE=1048576
+SERVICE="iSCSI target"
+
+configure_memsize()
+{
+    if [ -e /proc/sys/net/core/wmem_max ]; then
+        echo ${MEM_SIZE} > /proc/sys/net/core/wmem_max
+    fi
+
+    if [ -e /proc/sys/net/core/rmem_max ]; then
+        echo ${MEM_SIZE} > /proc/sys/net/core/rmem_max
+    fi
+
+    if [ -e /proc/sys/net/core/wmem_default ]; then
+        echo ${MEM_SIZE} > /proc/sys/net/core/wmem_default
+    fi
+
+    if [ -e /proc/sys/net/core/rmem_default ]; then
+        echo ${MEM_SIZE} > /proc/sys/net/core/rmem_default
+    fi
+
+    if [ -e /proc/sys/net/ipv4/tcp_mem ]; then
+        echo "${MEM_SIZE} ${MEM_SIZE} ${MEM_SIZE}" > /proc/sys/net/ipv4/tcp_mem
+    fi
+
+    if [ -e  /proc/sys/net/ipv4/tcp_rmem ]; then
+        echo "${MEM_SIZE} ${MEM_SIZE} ${MEM_SIZE}" > /proc/sys/net/ipv4/tcp_rmem
+    fi
+
+    if [ -e /proc/sys/net/ipv4/tcp_wmem ]; then
+        echo "${MEM_SIZE} ${MEM_SIZE} ${MEM_SIZE}" > /proc/sys/net/ipv4/tcp_wmem
+    fi
+}
+
+RETVAL=0
+
+start() {
+	gprintf "Starting %s service: " "$SERVICE"
+	configure_memsize
+	modprobe -q crc32c
+	modprobe iscsi_trgt
+	daemon /usr/sbin/ietd
+	RETVAL=$?
+	if [ "$RETVAL" -eq "0" ]; then
+		touch /var/lock/subsys/ietd
+	fi
+	echo
+	return $RETVAL
+}
+	
+stop() {
+	gprintf "Shutting down %s service: " "$SERVICE"
+	ietadm --op delete >/dev/null 2>/dev/null
+	killproc ietd
+	modprobe -r iscsi_trgt 2>/dev/null
+	RETVAL=$?
+	if [ "$RETVAL" -eq "0" ]; then
+		rm -f /var/lock/subsys/ietd
+	fi
+	modprobe -r crc32c 2>/dev/null
+	echo
+	return $RETVAL
+}
+
+restart()
+{
+        stop
+        start
+}
+
+condrestart()
+{
+	if [ -f /var/lock/subsys/ietd ]; then
+		restart
+	fi
+}
+
+case "$1" in
+  start)
+        start
+		RETVAL=$?
+        ;;
+  stop)
+        stop
+		RETVAL=$?
+        ;;
+  restart)
+        restart
+		RETVAL=$?
+        ;;
+  condrestart)
+        condrestart
+		RETVAL=$?
+        ;;
+  status)
+        status ietd
+		RETVAL=$?
+        ;;
+  *)
+        gprintf "Usage: %s {start|stop|restart|status}\n" "$SERVICE"
+        exit 1
+esac
+
+exit $RETVAL

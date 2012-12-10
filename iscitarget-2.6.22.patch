@@ -1,0 +1,11 @@
+--- iscsitarget-0.4.15-2mdv2008.0/kernel/event.c.orig	2007-06-02 20:19:27.000000000 +0200
++++ iscsitarget-0.4.15-2mdv2008.0/kernel/event.c	2007-06-02 20:20:04.000000000 +0200
+@@ -95,7 +95,7 @@
+ 
+ int event_init(void)
+ {
+-	nl = netlink_kernel_create(NETLINK_IET, 1, event_recv, THIS_MODULE);
++	nl = netlink_kernel_create(NETLINK_IET, 1, event_recv, NULL, THIS_MODULE);
+ 	if (!nl)
+ 		return -ENOMEM;
+ 	else
