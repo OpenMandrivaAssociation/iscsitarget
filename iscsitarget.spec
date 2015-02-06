@@ -3,7 +3,7 @@
 Summary:	iSCSI target
 Name:		iscsitarget
 Version:	1.4.20.3
-Release:	1
+Release:	2
 License:	GPLv2+
 Group:		Networking/Other
 Url:		http://iscsitarget.sourceforge.net/
