@@ -6,7 +6,7 @@ Version:	1.4.20.3
 Release:	2
 License:	GPLv2+
 Group:		Networking/Other
-Url:		http://iscsitarget.sourceforge.net/
+Url:		https://iscsitarget.sourceforge.net/
 Source0:	http://downloads.sourceforge.net/iscsitarget/%{name}-%{version}.tar.gz
 Source1:	iscsitarget.init
 Source2:	iscitarget-2.6.22.patch
